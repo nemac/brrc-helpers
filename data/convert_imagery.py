@@ -24,13 +24,13 @@ from osgeo import gdal
 import rasterio
 import geopandas as gpd
 from shapely.geometry import box
+from rasterio.plot import show
+from rasterio.mask import mask
+from rasterio.warp import calculate_default_transform, reproject, Resampling
 
-# from rasterio.plot import show
-# from rasterio.mask import mask
-# from rasterio.warp import calculate_default_transform, reproject, Resampling
+parser = argparse.ArgumentParser(description="Converts an image to match the projection of a seed image and rescales the pixel size")
 
-parser = argparse.ArgumentParser(description="test")
-
+# arguments for converter
 parser.add_argument('new_image',
                     help='The new or output image')
 
@@ -49,50 +49,33 @@ parser.add_argument('-r',
                     required = False)
 
 
-# print(parser.parse_args())
-# [new_image, seed_image, new_resoltion ] = parser.parse_args()
 args = parser.parse_args()
 
-
-# print(args.new_resoltion, args.seed_image)
-
+# check if seed image is available
 if args.seed_image is not None:
     print('seed_image is not none:', args.seed_image)
 else:
     print('seed_image is  none:', args.seed_image)
     seedImage =  '/home/datafolder/seed.tif'
 
-print(args.new_image)
 
+# get seed image crs and bounds
 seedRaster = rasterio.open(seedImage)
 seedCRS = seedRaster.crs
 seedBounds = seedRaster.bounds
 
-print(seedCRS.to_wkt())
-
+# get input image to convert crs and bounds
 newRaster = rasterio.open(args.new_image)
 newCRS = newRaster.crs
 newBounds = newRaster.bounds
 
-bbox = box(seedBounds.left, seedBounds.bottom, seedBounds.right, seedBounds.top)
+#output name with the resolution appeneded
+currentFileName = newRaster.name
+newFileNanme = currentFileName.replace('.tif', '_' + str(args.new_resoltion) + '.tif')
 
-yrdy = gpd.GeoDataFrame({'geometry': bbox}, index=[0])
-# yrdy.crs  = seedRaster.crs
-
-# geob = gpd.GeoDataFrame.from_features(yrdy.to_json()['features'])
-
-
-# yrdy.crs = seedCRS
-# geo = yrdy.to_crs(crs=seedCRS)
-yrdy.to_file("/home/datafolder/cutline.geojson", driver='GeoJSON')
-
-# print(yrdy)
-
-
-# gdal.Warp('/home/datafolder/seedout.tif', args.new_image, cutlineDSName="/home/datafolder/cutline.geojson", resampleAlg=gdal.GRA_Average, dstSRS=seedRaster.crs,  xRes=args.new_resoltion,  yRes=args.new_resoltion)
-# gdal.Warp('/home/datafolder/seedout.tif', args.new_image, cropToCutline=True, cutlineDSName="/home/datafolder/cutline.geojson", resampleAlg=gdal.GRA_Average, srcNodata=0, dstNodata=0, dstSRS=seedCRS.to_wkt(),  xRes=args.new_resoltion,  yRes=args.new_resoltion)
-gdal.Warp('/home/datafolder/seedout.tif', args.new_image,
-            outputBounds=[seedBounds.left, seedBounds.bottom, seedBounds.right, seedBounds.top], 
+# warp the image to new seed image crs,  change pixel size, crop to seed image's bounds, and use average Resampling
+gdal.Warp(newFileNanme, args.new_image,
+            outputBounds=[seedBounds.left, seedBounds.bottom, seedBounds.right, seedBounds.top],
             resampleAlg=gdal.GRA_Average,
             srcNodata=0,
             dstNodata=0,
@@ -100,4 +83,5 @@ gdal.Warp('/home/datafolder/seedout.tif', args.new_image,
             xRes=args.new_resoltion,
             yRes=args.new_resoltion)
 
-# gdalwarp -tr 270 270  -cutline $data_location/clipper.shp -crop_to_cutline -r average -srcnodata 0 -dstnodata 0 -overwrite $data_location/road_noise.tif $data_location/road_noise_270_gdal.tif  -t_srs $data_location/wkt.txt
+newRaster.close()
+seedRaster.close()
