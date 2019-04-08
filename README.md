@@ -15,11 +15,11 @@ docker run -v $(pwd)/data/:/home/datafolder --name rasterio-gdalps -it --rm rast
 
 
 What can I do with the script?
-```bash
+```Shell
 python3 /home/datafolder/convert_imagery.py -h
 ```
 
-```bash
+```Shell
 usage: convert_imagery.py [-h] [-s SEED_IMAGE] [-r NEW_RESOLTION] new_image
 
 Converts an image to match the projection of a seed image and rescales the
@@ -38,6 +38,6 @@ optional arguments:
 
 
 Example of converting an image
-```bash
+```Shell
 python3 /home/datafolder/convert_imagery.py /home/datafolder/road_noise.tif
 ```
