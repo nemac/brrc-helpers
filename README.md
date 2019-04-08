@@ -9,17 +9,17 @@ docker build . -t rasterio-gdal
 
 
 Run Docker
-```Shell
-docker run -v $(pwd)/data/:/home/datafolder --name rasterio-gdalps -it --rm rasterio-gdal /bin/bash
+```bash
+$ docker run -v $(pwd)/data/:/home/datafolder --name rasterio-gdalps -it --rm rasterio-gdal /bin/bash
 ```
 
 
 What can I do with the script?
-```Shell
-python3 /home/datafolder/convert_imagery.py -h
+```bash
+$ python3 /home/datafolder/convert_imagery.py -h
 ```
 
-```Shell
+```bash
 usage: convert_imagery.py [-h] [-s SEED_IMAGE] [-r NEW_RESOLTION] new_image
 
 Converts an image to match the projection of a seed image and rescales the
@@ -38,6 +38,6 @@ optional arguments:
 
 
 Example of converting an image
-```Shell
-python3 /home/datafolder/convert_imagery.py /home/datafolder/road_noise.tif
+```bash
+$ python3 /home/datafolder/convert_imagery.py /home/datafolder/road_noise.tif
 ```
