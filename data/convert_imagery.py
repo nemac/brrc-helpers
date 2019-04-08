@@ -53,11 +53,9 @@ args = parser.parse_args()
 
 # check if seed image is available
 if args.seed_image is not None:
-    print('seed_image is not none:', args.seed_image)
+    seedImage = args.seed_image
 else:
-    print('seed_image is  none:', args.seed_image)
     seedImage =  '/home/datafolder/seed.tif'
-
 
 # get seed image crs and bounds
 seedRaster = rasterio.open(seedImage)
