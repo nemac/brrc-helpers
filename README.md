@@ -3,8 +3,8 @@ GDAL Utility Scripts
 
 
 Build the Docker image
-```
-docker build . -t rasterio-gdal
+```bash
+$ docker build . -t rasterio-gdal
 ```
 
 
