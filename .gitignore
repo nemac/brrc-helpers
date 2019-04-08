@@ -1,1 +1,3 @@
-.data/cutline*
+data/*
+!data/*.py
+!data/seed.tif
