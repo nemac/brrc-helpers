@@ -74,7 +74,8 @@ currentFileName = newRaster.name
 newFileNanme = currentFileName.replace('.tif', '_' + str(args.new_resoltion) + '.tif')
 
 # warp the image to new seed image crs,  change pixel size, crop to seed image's bounds, and use average Resampling
-gdal.Warp(newFileNanme, args.new_image,
+gdal.Warp(  newFileNanme,
+            args.new_image,
             outputBounds=[seedBounds.left, seedBounds.bottom, seedBounds.right, seedBounds.top],
             resampleAlg=gdal.GRA_Average,
             srcNodata=0,
