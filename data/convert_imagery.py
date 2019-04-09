@@ -61,6 +61,7 @@ parser.add_argument('-r',
 args = parser.parse_args()
 
 cutlineSHP = '/home/datafolder/cutline.shp'
+
 # check if seed image is available
 if args.seed_image is not None:
     seedImage = args.seed_image
