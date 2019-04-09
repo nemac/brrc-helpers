@@ -85,10 +85,10 @@ currentFileName = newRaster.name
 newFileNanme = currentFileName.replace('.tif', '_' + str(args.new_resoltion) + '.tif')
 
 # creats clip shape
-bbox = box(newBounds.left, newBounds.bottom, newBounds.right, newBounds.top)
-geoData = gpd.GeoDataFrame({'geometry': bbox}, index=[0], crs=newCRS)
-projGeoData = geoData.to_crs(seedRaster.crs)
-projGeoData.crs = newCRS.to_wkt();
+bbox = box(seedBounds.left, seedBounds.bottom, seedBounds.right, seedBounds.top)
+geoData = gpd.GeoDataFrame({'geometry': bbox}, index=[0], crs=seedCRS)
+projGeoData = geoData.to_crs(seedCRS)
+projGeoData.crs = seedCRS.to_wkt();
 projGeoData.to_file(cutlineSHP, driver='ESRI Shapefile')
 
 # warp the image to new seed image crs,  change pixel size, crop to seed image's bounds, and use average Resampling
