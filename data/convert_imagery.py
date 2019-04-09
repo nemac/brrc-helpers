@@ -27,6 +27,15 @@ from shapely.geometry import box
 from rasterio.plot import show
 from rasterio.mask import mask
 from rasterio.warp import calculate_default_transform, reproject, Resampling
+import pyproj
+import fiona
+from fiona.crs import from_epsg
+
+def getFeatures(geojson):
+    """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
+    import json
+    # print(json.loads(gdf.to_json())['features'][0]['geometry'])
+    return json.loads(geojson.to_json()) # ['features'][0]['geometry']
 
 parser = argparse.ArgumentParser(description="Converts an image to match the projection of a seed image and rescales the pixel size")
 
@@ -51,6 +60,7 @@ parser.add_argument('-r',
 
 args = parser.parse_args()
 
+cutlineSHP = '/home/datafolder/cutline.shp'
 # check if seed image is available
 if args.seed_image is not None:
     seedImage = args.seed_image
@@ -61,23 +71,32 @@ else:
 seedRaster = rasterio.open(seedImage)
 seedCRS = seedRaster.crs
 seedBounds = seedRaster.bounds
+seedNoData = seedRaster.nodata
 
 # get input image to convert crs and bounds
 newRaster = rasterio.open(args.new_image)
 newCRS = newRaster.crs
 newBounds = newRaster.bounds
+newNoData = newRaster.nodata
 
-#output name with the resolution appeneded
+# output name with the resolution appeneded
 currentFileName = newRaster.name
 newFileNanme = currentFileName.replace('.tif', '_' + str(args.new_resoltion) + '.tif')
+
+# creats clip shape
+bbox = box(newBounds.left, newBounds.bottom, newBounds.right, newBounds.top)
+geoData = gpd.GeoDataFrame({'geometry': bbox}, index=[0], crs=newCRS)
+projGeoData = geoData.to_crs(seedRaster.crs)
+projGeoData.crs = newCRS.to_wkt();
+projGeoData.to_file(cutlineSHP, driver='ESRI Shapefile')
 
 # warp the image to new seed image crs,  change pixel size, crop to seed image's bounds, and use average Resampling
 gdal.Warp(  newFileNanme,
             args.new_image,
             outputBounds=[seedBounds.left, seedBounds.bottom, seedBounds.right, seedBounds.top],
             resampleAlg=gdal.GRA_Average,
-            srcNodata=0,
-            dstNodata=0,
+            srcNodata=newNoData,
+            dstNodata=newNoData,
             dstSRS=seedCRS.to_wkt(),
             xRes=args.new_resoltion,
             yRes=args.new_resoltion)
