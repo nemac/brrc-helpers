@@ -34,13 +34,13 @@ optional arguments:
   -r NEW_RESOLTION  new spatial ressolution or pixel size, default is 270
 ```
 
-## run the conversion
+### run the conversion
 run conversion, converts road_noise.tif to Albers Conic and changes pixel size 275x275 meters
 ```bash
 $ docker exec brrc-helper python3 /home/datafolder/convert_imagery.py /home/datafolder/road_noise.tif -r 275
 ```
 
-## Shutdown the containers
+### Shutdown the containers
 Shutdown the containers
 ```bash
 $ docker-compose  -p brrc-helper -f docker-compose.yml down
