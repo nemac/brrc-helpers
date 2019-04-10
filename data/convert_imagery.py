@@ -28,8 +28,6 @@ from rasterio.plot import show
 from rasterio.mask import mask
 from rasterio.warp import calculate_default_transform, reproject, Resampling
 import pyproj
-import fiona
-from fiona.crs import from_epsg
 
 def getFeatures(geojson):
     """Function to parse features from GeoDataFrame in such a manner that rasterio wants them"""
@@ -46,17 +44,16 @@ parser.add_argument('new_image',
 parser.add_argument('-s',
                     action='store',
                     dest='seed_image',
-                    help='The seed image default is a conus image projected to EPSG: 42303 - \"Albers Conic\" ',
+                    help='The default seed image is a CONUS image projected to EPSG: 42303 - \"Albers Conic\" ',
                     default=None,
                     required = False)
 
 parser.add_argument('-r',
                     action='store',
                     dest='new_resoltion',
-                    help='new spatial ressolution or pixel size, default is 270',
+                    help='new spatial resolution or pixel size, default is 270',
                     default=270,
                     required = False)
-
 
 args = parser.parse_args()
 
@@ -66,7 +63,7 @@ cutlineSHP = '/home/datafolder/cutline.shp'
 if args.seed_image is not None:
     seedImage = args.seed_image
 else:
-    seedImage =  '/home/datafolder/seed.tif'
+    seedImage =  '/home/datafolder/conus_seed.tif'
 
 # get seed image crs and bounds
 seedRaster = rasterio.open(seedImage)
