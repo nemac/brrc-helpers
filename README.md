@@ -1,18 +1,32 @@
 # brrc-helpers
 GDAL Utility Scripts
 
-
-Build the Docker image
+Clone or download this repo. Then from a command line build the Docker image.
 ```bash
 $ docker build . -t rasterio-gdal
 ```
 
+## Run using Docker Compose
+start docker containers
+```bash
+$ docker-compose  -p brrc-helper -f docker-compose.yml up -d
+```
 
-Run Docker
+run conversion, converts road_noise.tif to Albers Conic and changes pixel size 275x275 meters
+```bash
+$ docker exec brrc-helper python3 /home/datafolder/convert_imagery.py /home/datafolder/road_noise.tif -r 275
+```
+
+Shutdown the containers
+```bash
+$ docker-compose  -p brrc-helper -f docker-compose.yml down
+```
+
+## Or run using docker
+start docker containers
 ```bash
 $ docker run -v $(pwd)/data/:/home/datafolder --name rasterio-gdalps -it --rm rasterio-gdal /bin/bash
 ```
-
 
 What can I do with the script?
 ```bash
@@ -36,8 +50,7 @@ optional arguments:
 ```
 
 
-
-Example of converting an image
+Example of converting an image, converts road_noise.tif to script defaults: Albers Conic and pixel size 250x250 meters
 ```bash
 $ python3 /home/datafolder/convert_imagery.py /home/datafolder/road_noise.tif
 ```

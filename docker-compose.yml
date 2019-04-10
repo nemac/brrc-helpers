@@ -1,0 +1,21 @@
+
+version: '2'
+services:
+  brrc-helper:
+    image: rasterio
+    container_name: brrc-helper
+    privileged: true
+    command: tail -f /dev/null
+    volumes:
+      - ./data:/home/datafolder
+    networks:
+      net:
+        ipv4_address: 10.20.0.2
+    tty: true
+
+networks:
+  net:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.20.0.0/16
